@@ -1,0 +1,1 @@
+Custom UART implementation to learn Verilog. Main goals are to be able to understand basic hardware implementation of these protocols for future projects.
