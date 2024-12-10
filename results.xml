@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1733872202" />
+    <testcase name="full_test" classname="full_uart_testbench" file="/home/jasperd/Documents/programming/hdl/UART/full_uart_testbench.py" lineno="9" time="0.0020542144775390625" sim_time_ns="1805440.001" ratio_time="878895568.471948" />
+  </testsuite>
+</testsuites>
