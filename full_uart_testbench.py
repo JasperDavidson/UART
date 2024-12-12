@@ -2,34 +2,43 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge
 
-async def delay(dut, cycle_wait_count):
+async def delay(dut, cycle_wait_count, oversampling):
     for _ in range(cycle_wait_count):
-        await RisingEdge(dut.s_tick)
+        await RisingEdge(dut.tx_s_tick)
+    
+    for _ in range(cycle_wait_count * oversampling):
+        await RisingEdge(dut.rx_s_tick)
         
 @cocotb.test()
 async def full_test(dut):
     # 8.68 microseconds is 115200 bps for the baud rate
-    cocotb.start_soon(Clock(dut.s_tick, 8680 * 16, units="ns").start())
+    baud_rate = 8680;
+    oversampling = 16;
+    cocotb.start_soon(Clock(dut.tx_s_tick, baud_rate, units="ns").start())
+    cocotb.start_soon(Clock(dut.rx_s_tick, baud_rate * oversampling, units="ns").start())
     
     # Reset rx and tx
     dut.tx_reset.value = 1
     dut.rx_reset.value = 1
-    await delay(dut, 1)
+    await delay(dut, 1, oversampling)
     dut.tx_reset.value = 0
     dut.rx_reset.value = 0
     
-    # Transmit data
+    # Set up oversampling
+    dut.oversampling.value = oversampling - 1 # Minus 1 because the counter will start at 1
+    
+    # Set up transmissioon
     tx_data = 0b10100101
     dut.tx_data.value = tx_data
     dut.tx_transmission.value = 1
-    await delay(dut, 1)
+    await delay(dut, 1, oversampling)
     dut.tx_transmission.value = 0
     
     print("before while")
     
     i = 0
     while not dut.rx_done.value:
-        await delay(dut, 1)  # Wait for one baud interval
+        await delay(dut, 1, oversampling)  # Wait for one baud interval
         dut.rx.value = dut.tx.value
         print(f"Cycle {i}: RX={dut.rx.value}, TX={dut.tx.value}, TX_DONE={dut.tx_done.value}")
         i += 1
