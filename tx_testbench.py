@@ -18,6 +18,7 @@ async def tx_test(dut):
     dut.transmission.value = 1
     dut.data.value = 0b11101001
     await delay(dut, 1)
+    dut.transmission.value = 0;
 
     data = []
     for _ in range(11):
@@ -26,7 +27,7 @@ async def tx_test(dut):
     
     print(data)
     
-    # Deleting the idle, start, and stop bits from the stream respectivelyz
+    # Deleting the idle, start, and stop bits from the stream respectively
     del data[9]
     del data[8]
     del data[0]

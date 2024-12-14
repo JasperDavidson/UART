@@ -9,7 +9,7 @@ async def delay(dut, cycle_wait_count):
 @cocotb.test()
 async def rx_test(dut):
      # 8.68 microseconds is 115200 bps
-    cocotb.start_soon(Clock(dut.s_tick, 8680 * 16, units="ns").start())
+    cocotb.start_soon(Clock(dut.s_tick, 8680, units="ns").start())
 
     dut.reset.value = 1
     dut.rx.value = 1

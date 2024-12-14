@@ -2,7 +2,7 @@ module uart_rx(
     input rx,
     input s_tick,
     input reset,
-    input [3:0] oversampling,
+    input [4:0] oversampling,
     output reg [7:0] dout,
     output reg rx_done
 );
@@ -52,14 +52,11 @@ module uart_rx(
                         counter <= (counter + 1) % oversampling;
                     end
                 DATA: begin
-                    if (counter == oversampling) begin
+                    if (counter == oversampling - 1) begin
                         if (bit_position == DATA_SIZE - 1)
                             state <= STOP;
                         
-                        if (one_count > zero_count)
-                            dout <= {dout[6:0], 1'b1};
-                        else
-                            dout <= {dout[6:0], 1'b0};
+                        dout <= {dout[6:0], (one_count > zero_count) ? 1'b1 : 1'b0};
 
                         // dout <= {dout[6:0], rx};
                         bit_position <= bit_position + 1;

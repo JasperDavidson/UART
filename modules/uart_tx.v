@@ -40,10 +40,10 @@ module uart_tx (
 						tx <= 1;
 				TRANSMIT:
 					if (bit_position < DATA_SIZE) begin
-						$display("TRANSMITTING");
 						tx <= data[bit_position];
 						bit_position <= bit_position + 1;
 					end else begin
+						$display("Reached here");
 						state <= IDLE;
 						tx_done <= 1;
 					end
